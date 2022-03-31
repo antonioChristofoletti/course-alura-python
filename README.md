@@ -39,10 +39,28 @@ foo.method_foo(args)
 
 ### String
 
+- It is immutable, good for memory optimization. Since It is immutable, stuff like `string_foo[2] = 'C'` is strictly prohibit (Throw errors)
+```
+  string_a = 'abc'
+  string_b = 'abc'
+  
+  print(id(string_a) == id(string_b))
+  # It is true because Python is smart and points string_b to the same allocated memory as string_a, 
+  no harm in this because changing the value of this string is impossible.
+
+```
 - Concatenating: `"Printing string {} an value {:.2f}".format(var1, var2)`;
 - Interpolating: `f"Interpoling a var {var1}"`
 - Useful funs:
-  - lower, upper, strip, substring, startwith, endwith.
+  - `lower`
+  - `upper`
+  - `strip`
+  - `startwith`,
+  - `endwith`,
+  - `SubString/slicing:` (First parameter is inclusive, but the second is not)
+    - `string_foo[0:3]` 
+    - `string_foo[10:]` 
+  - `find:` get the first index of a substring in the string
 
 ### Sequence Type
 
@@ -62,6 +80,8 @@ Easy to create, It doesn't have a limited size. It allows, items with different 
 - Lowest value: `min(list)`
 - Biggest value: `max(list)`
 - Length: `len(list)`
+- add item: `list.append(item)`
+- remove item: ``
 - Quantity of a specific item: `list.count("value")`
 - First index in the list: `list.index("value"")`
 - Check if a value is in the list: `value in list` or `value not in list`
@@ -84,10 +104,100 @@ Immutable sequence list. Faster and more efficient than traditional list.
 - Creating: `duple_foo = (1,2,3)`
 - Share most part of the common methods found in List.
 
+#### Array
+
+Python has an array type which can be used for performance, however, even so, generally using the array type from numpy dependencies is more common.
+So, try avoid it using the pure array, numpy is a better option.
+
+Example native aray:
+```
+  import array as arr
+  arr.array("d", [1, 3.5]) # array just accept one data type, so It is necessary pass as argument "d" (for numbers)
+```
+
+Example array numpy:
+```
+  import numpy as np
+  numbers = np.array([1, 3.5])
+```
+
+#### Interesting stuff
+
+##### Builtins enumarate
+
+enumarate returns the list/tuple with the numeric index, It is a lazy function.
+
+Example:
+
+```
+  students = (("Antonio", 23), ("Pedro", 33))
+  
+  for student in enumarate(students):
+    print(f"Index {student[0]} - Student {student[1]}"
+```
+
+##### Unpacking tuple
+
+It can be more than 2 elements whether necessary.
+
+Example:
+
+```
+  students = (("Antonio", 23), ("Pedro", 33))
+  
+  for index, student in enumarate(students):
+    print(f"Index {index} - Student {student}"
+```
+
+#### Sorting
+
+```
+# Simple sorting
+
+foo_list = [30, 10, 20]
+
+sorted(foo_list)
+sorted(foo_list, reverse=True) or list(reversed(foo_list))
+foo_list.sort()
+
+# Sorting objects
+
+foo_list_bank_account = [bank_acc_01, bank_acc_02, bank_acc_03, bank_acc_04]
+
+sorted(foo_list_bank_account, key=function_that_reduce_the_object_to_a_comparatible_value)
+sorted(foo_list_bank_account, key=attrgetter("attribute_compare"))
+
+# Implement the methods:
+# It means lesser than
+def __lt__(self, other):
+  return self.attr < other.attr
+  
+# Than
+  sorted(foo_list_bank_account)
+  
+# Important implement in the class thwe total_ordering from functools to suport others comparasion: >=, <=
+```
+
 ### Dictionary
 
 - Creating: `dict_foo = {'Nico' : 39, 'Flavio': 37, 'Marcos' : 30}`
 - Using key to access value: `dict_foo['Flavio']`
+
+### Null
+
+Null in Python is known as None and It is a object of the class NoneType. All the Nones are pointed to the same object 
+and It is not possible create new object of this class.
+
+### Casting values to bool
+
+It is possible realize an implicit conversion to bool. Examples:
+
+```
+  if "test":
+    do this...
+```
+
+Empty `dict`, `list`, `duple` and `string` and the value `0` are convert to `False`, otherwise, It is converted to `True`.
 
 ## Input/Output File
 
@@ -112,7 +222,8 @@ There is no secret.
         linesList = [line for line in fileFoo if fileFoo.strip() != ""]
     ```
   
-## h2 OOP
+
+## OOP
 
 ### Refreshing OOP
 
@@ -170,9 +281,6 @@ class SavingAccount(Account):
   @classmethod
   def class_method_that_receives_a_instance(cls):
     pass
-  
-  
-  
 ```
 
 ### Functions
@@ -196,20 +304,22 @@ Double underline can be problematic in inheritance.
 
 ### Python Data Model
 
-Methods that works as an API to make objects play wekk with most idiomatic languages features.
+Methods that works as an API to make objects work with idiomatic languages features.
 You can think of the data model as a description of Python as a framework.  It formalizes the interfaces of the 
 building blocks of the language itself, such as sequences, iterators, functions, classes, context managers, and so on.
 
 These methods are also known as magic methods. They don't need to ve invoke because the python is going to use it. Examples:
 
 - `__str__` work just as toString() in Java;
+- `__eq__` check if 2 objects are considered the same. It allows idiomatic language feature like `object1 == object2`
+- `__lt__` used for sorting and checking if a object is bigger or smaller than others
 - `__repr__` prints an object in a nice way for debugging;
 - `__getitem__` works as a Java Iterador Interface, however more powerful, It is a communication channel in order to allow python syntax resources, such as:
-  - something in your_object
+  - something `in` your_object
   - your_object[0]
-  - for i in your_object.
+  - for i `in` your_object.
 - __init__ construtor;
-- There many others
+- There are many others
 
 ### ABC (Abstract Basic Classes)
 
@@ -297,6 +407,3 @@ class Request(AcceptMixin, ETagRequestMixin, UserAgentMixin, AuthenticationMixin
 The difference is subtle, but in the above examples, the mixin classes weren't made to stand on their own. 
 In more traditional multiple inheritance, the AuthenticationMixin (for example) would probably be something more like Authenticator. 
 That is, the class would probably be designed to stand on its own.
-
-## Handling Strings
-
